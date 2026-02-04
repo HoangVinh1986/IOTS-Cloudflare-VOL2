@@ -79,38 +79,8 @@ def control_all():
 
 @app.route("/get_status", methods=["GET"])
 def get_status():
-    # Get status for LED1 and LED2
-    status1 = light_control(status="status", led="1")  # Need to modify light_control for status
-    status2 = light_control(status="status", led="2")
-    # But light_control returns content, need to parse or modify
-    # For simplicity, assume we call directly
-    # Actually, better to add a separate function or modify
-    # For now, let's add a simple get_status function
-    # But to keep simple, let's modify light_control to handle "status"
-    # Wait, in code, for toggle it gets status first
-    # Perhaps add a new function get_led_status(led)
-    # But to save time, let's add route that calls light_control with toggle but doesn't change, just get status
-    # Wait, better: add a new route that fetches status without changing
-    # Since ESP8266 has /led1/status, we can call it directly
-    import requests
-    from app.services.call_esp8266 import ESP8266_HOST, REQUEST_TIMEOUT, MAX_RETRY
-    statuses = {}
-    for led in ["1", "2"]:
-        url = f"https://{ESP8266_HOST}/led{led}/status"
-        status = "unknown"
-        for attempt in range(MAX_RETRY):
-            try:
-                response = requests.get(url, timeout=REQUEST_TIMEOUT)
-                if response.status_code == 200:
-                    lines = response.text.strip().split("\n")
-                    for line in lines:
-                        if line.startswith(f"LED{led}="):
-                            status = line.split("=")[1].upper()
-                            break
-                break
-            except:
-                pass
-        statuses[f"led{led}"] = status
-    return jsonify(statuses)
+    from app.services.call_esp8266 import get_led_status
+    statuses = get_led_status()
+    return jsonify({"led1": statuses.get("1", "unknown"), "led2": statuses.get("2", "unknown")})
 
 # Vercel expects the Flask app to be named 'app'
