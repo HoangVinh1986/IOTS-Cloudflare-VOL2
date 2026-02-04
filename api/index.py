@@ -38,29 +38,29 @@ def botController():
         "model": response
     }), 200
 
-@app.route("/toggle_led1", methods=["GET", "POST"])
-def toggle_led1():
-    result = light_control(status="toggle", led="1")
-    save_history({
-        "timestamp": datetime.datetime.now().isoformat(),
-        "type": "light_control",
-        "action": "toggle",
-        "led": "1",
-        "result": result
-    })
-    return jsonify({"message": result["content"]})
+# @app.route("/toggle_led1", methods=["GET", "POST"])
+# def toggle_led1():
+#     result = light_control(status="on", led="1")
+#     save_history({
+#         "timestamp": datetime.datetime.now().isoformat(),
+#         "type": "light_control",
+#         "action": "on",
+#         "led": "1",
+#         "result": result
+#     })
+#     return jsonify({"message": result["content"]})
 
-@app.route("/toggle_led2", methods=["GET", "POST"])
-def toggle_led2():
-    result = light_control(status="toggle", led="2")
-    save_history({
-        "timestamp": datetime.datetime.now().isoformat(),
-        "type": "light_control",
-        "action": "toggle",
-        "led": "2",
-        "result": result
-    })
-    return jsonify({"message": result["content"]})
+# @app.route("/toggle_led2", methods=["GET", "POST"])
+# def toggle_led2():
+#     result = light_control(status="on", led="2")
+#     save_history({
+#         "timestamp": datetime.datetime.now().isoformat(),
+#         "type": "light_control",
+#         "action": "on",
+#         "led": "2",
+#         "result": result
+#     })
+#     return jsonify({"message": result["content"]})
 
 @app.route("/control_all", methods=["GET", "POST"])
 def control_all():
@@ -77,10 +77,20 @@ def control_all():
     })
     return jsonify({"message": result["content"]})
 
-@app.route("/get_status", methods=["GET"])
-def get_status():
-    from app.services.call_esp8266 import get_led_status
-    statuses = get_led_status()
-    return jsonify({"led1": statuses.get("1", "unknown"), "led2": statuses.get("2", "unknown")})
+@app.route("/control_led", methods=["GET", "POST"])
+def control_led():
+    led = request.args.get("led", "1")
+    action = request.args.get("action", "off")
+    if action not in ["on", "off"] or led not in ["1", "2"]:
+        return jsonify({"message": "Hành động hoặc đèn không hợp lệ"}), 400
+    result = light_control(status=action, led=led)
+    save_history({
+        "timestamp": datetime.datetime.now().isoformat(),
+        "type": "light_control",
+        "action": action,
+        "led": led,
+        "result": result
+    })
+    return jsonify({"message": result["content"]})
 
 # Vercel expects the Flask app to be named 'app'

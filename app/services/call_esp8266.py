@@ -25,28 +25,18 @@ def _send_request(url):
 
 
 def toggle_led(led):
-    # Get current status
-    url = f"https://{ESP8266_HOST}/led{led}/status"
-    current_status = "off"
-    for attempt in range(MAX_RETRY):
-        try:
-            response = requests.get(url, timeout=REQUEST_TIMEOUT)
-            if response.status_code == 200:
-                lines = response.text.strip().split("\n")
-                for line in lines:
-                    if line.startswith(f"LED{led}="):
-                        current_status = line.split("=")[1].lower()
-                        print(f"Current status for LED{led}: {current_status}")
-                        break
-            break
-        except Exception as e:
-            print(f"Error getting status for LED{led}: {e}")
-            time.sleep(1)
-    # Toggle
-    new_status = "on" if current_status == "off" else "off"
-    print(f"Toggling LED{led} from {current_status} to {new_status}")
-    _send_request(f"https://{ESP8266_HOST}/led{led}/{new_status}")
-    return new_status
+    # Send toggle request directly
+    url = f"http://{ESP8266_HOST}/led{led}/toggle"
+    response = _send_request(url)
+    if response:
+        # Parse the response to get new status
+        lines = response.strip().split("\n")
+        for line in lines:
+            if line.startswith(f"LED{led}="):
+                new_status = line.split("=")[1].lower()
+                print(f"Toggled LED{led} to {new_status}")
+                return new_status
+    return "unknown"
 
 
 def format_response(action, led_statuses):
@@ -71,10 +61,10 @@ def light_control(status, led):
                 return {"content": "Đèn không hợp lệ", "image": []}
         elif status in ["on", "off"]:
             if led == "all":
-                _send_request(f"https://{ESP8266_HOST}/ledall/{status}")
+                _send_request(f"http://{ESP8266_HOST}/ledall/{status}")
                 response_content = f"Tất cả đèn đã {status.upper()}"
             elif led in ["1", "2"]:
-                _send_request(f"https://{ESP8266_HOST}/led{led}/{status}")
+                _send_request(f"http://{ESP8266_HOST}/led{led}/{status}")
                 response_content = f"Đèn {led} đã {status.upper()}"
             else:
                 return {"content": "Đèn không hợp lệ", "image": []}
@@ -89,7 +79,7 @@ def light_control(status, led):
 def get_led_status():
     statuses = {}
     for led in ["1", "2"]:
-        url = f"https://{ESP8266_HOST}/led{led}/status"
+        url = f"http://{ESP8266_HOST}/led{led}/status"
         status = "unknown"
         for attempt in range(MAX_RETRY):
             try:
@@ -127,11 +117,11 @@ def light_control_old(action):
             led_statuses["2"] = toggle_led("2")
 
         elif action == "on_all":
-            _send_request(f"https://{ESP8266_HOST}/ledall/on")
+            _send_request(f"http://{ESP8266_HOST}/ledall/on")
             led_statuses = {"1": "on", "2": "on"}
 
         elif action == "off_all":
-            _send_request(f"https://{ESP8266_HOST}/ledall/off")
+            _send_request(f"http://{ESP8266_HOST}/ledall/off")
             led_statuses = {"1": "off", "2": "off"}
 
         else:

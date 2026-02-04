@@ -228,4 +228,51 @@ function closeFileChoosen(element = null) {
     }
 }
 
+// Functions for LED control
+function toggleLed(led) {
+    fetch('/get_status')
+        .then(res => res.json())
+        .then(data => {
+            const currentStatus = data['led' + led];
+            const newAction = currentStatus === 'ON' ? 'off' : 'on';
+            fetch('/control_led?led=' + led + '&action=' + newAction)
+                .then(res => res.json())
+                .then(data => {
+                    alert(data.message);
+                    updateStatus();
+                })
+                .catch(err => console.error('Error:', err));
+        })
+        .catch(err => console.error('Error:', err));
+}
+
+function controlAll(action) {
+    fetch('/control_all?action=' + action)
+        .then(res => res.json())
+        .then(data => {
+            alert(data.message);
+            updateStatus();
+        })
+        .catch(err => console.error('Error:', err));
+}
+
+function updateStatus() {
+    fetch('/get_status')
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('led1-status').textContent = 'Đèn 1: ' + (data.led1 === 'ON' ? 'Bật' : 'Tắt');
+            document.getElementById('led1-status').className = 'led-indicator ' + data.led1.toLowerCase();
+            document.getElementById('led2-status').textContent = 'Đèn 2: ' + (data.led2 === 'ON' ? 'Bật' : 'Tắt');
+            document.getElementById('led2-status').className = 'led-indicator ' + data.led2.toLowerCase();
+        })
+        .catch(err => console.error('Error:', err));
+}
+
+// Update status on page load
+document.addEventListener('DOMContentLoaded', function() {
+    if (document.getElementById('led1-status')) {
+        updateStatus();
+    }
+});
+
 
