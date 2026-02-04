@@ -1,0 +1,70 @@
+{
+    "generate_image_declaration": {
+        "name": "generateImage",
+        "description": "Hàm tạo hình ảnh và tác động vào ảnh bằng OpenAI, chỉ sử dụng khi đầu vào có liên quan",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "prompt": {
+                    "type": "string",
+                    "description": "Đầu vào yêu tạo tạo hoặc chỉnh sửa hình ảnh. Hãy trích xuất text đầu vào và tạo lời nhắc tự nhiên và tinh tế nhất."
+                },
+                "attchment": {
+                    "type": "string",
+                    "description": "Nếu đầu vào có tệp là ảnh để chỉnh sửa thì hãy trích xuất và truyền vào đây bằng chuỗi base64. tham số này không bắt buộc"
+                }
+            }
+        }
+    },
+    "send_mail_declaration": {
+        "name": "send_mail",
+        "description": "Hàm gửi Mail đến đối tượng lấy dữ liệu đầu vào, chỉ sử dụng khi đầu vào có liên quan",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "to": {
+                    "type": "object",
+                    "description": "Danh sách chứa các tài khoản Gmail có thể nhận được Mail, nếu đầu vào có liệt kê ra thì bạn hãy đưa vào Array/List. Ví dụ: [example@gmail.com]"
+                },
+                "subject": {
+                    "type": "string",
+                    "description": "Thiết lập TIÊU ĐỀ hộp thư (Mail). Bạn hãy kiểm tra đầu vào nếu tiêu đề thì bạn hãy lọc ra, nếu không có thì bạn hãy thiếp lập tiêu đề mặc định là \"NGƯỜI ẨN DANH ĐÃ GỬI MAIL ĐẾN BẠN\""
+                },
+                "content": {
+                    "type": "string",
+                    "description": "Nội dung của hộp thư. Bạn hãy lấy nội dung / văn bản đầu vào về thiết lập nó, phần này không bao gồm TIÊU ĐỀ và MAIL. Nếu có markdown thì bạn hãy thêm markdown"
+                }
+            }
+        }
+    },
+    "createQrCode": {
+        "name": "createQrCode",
+        "description": "Tạo QR Code khi có dữ liệu",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "string",
+                    "description": "Đây là dữ liệu đầu vào và là data của QR Code sau khi quét"
+                }
+            }
+        }
+    },
+    "light_control": {
+        "name": "light_control",
+        "description": "Tắt/Mở đèn theo yêu cầu dữ liệu đầu vào nếu có yêu cầu khớp. Có thể chỉ định đèn 1, đèn 2, hoặc tất cả (all). Nếu không chỉ định, mặc định là all.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "description": "Đây là trạng thái đèn mà đầu vào yêu cầu (chỉ ràng buộc trong ON hay OFF), nếu là dữ liệu khác thì hãy truyền vào hàm là OFF"
+                },
+                "led": {
+                    "type": "string",
+                    "description": "Số đèn cần điều khiển (1, 2, hoặc all). Nếu không chỉ định hoặc nói chung chung như 'đèn', mặc định là all."
+                }
+            }
+        }
+    }
+}
