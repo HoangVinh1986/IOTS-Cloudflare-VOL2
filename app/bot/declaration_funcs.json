@@ -58,7 +58,7 @@
             "properties": {
                 "status": {
                     "type": "string",
-                    "description": "Đây là trạng thái đèn mà đầu vào yêu cầu (chỉ ràng buộc trong ON hay OFF), nếu là dữ liệu khác thì hãy truyền vào hàm là OFF"
+                    "description": "Đây là trạng thái đèn mà đầu vào yêu cầu (toggle để chuyển đổi trạng thái, on để bật, off để tắt). Các giá trị hợp lệ: toggle, on, off."
                 },
                 "led": {
                     "type": "string",
