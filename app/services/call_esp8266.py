@@ -10,13 +10,17 @@ MAX_RETRY = 3
 
 
 def _send_request(url):
+    print(f"Sending request to: {url}")
     for attempt in range(MAX_RETRY):
         try:
             response = requests.get(url, timeout=REQUEST_TIMEOUT)
             if response.status_code == 200:
+                print(f"Request successful: {response.text}")
                 return response.text
-        except:
-            time.sleep(1)
+        except Exception as e:
+            print(f"Request failed (attempt {attempt+1}): {e}")
+        time.sleep(1)
+    print("All attempts failed")
     return None
 
 
@@ -32,12 +36,15 @@ def toggle_led(led):
                 for line in lines:
                     if line.startswith(f"LED{led}="):
                         current_status = line.split("=")[1].lower()
+                        print(f"Current status for LED{led}: {current_status}")
                         break
             break
-        except:
-            pass
+        except Exception as e:
+            print(f"Error getting status for LED{led}: {e}")
+            time.sleep(1)
     # Toggle
     new_status = "on" if current_status == "off" else "off"
+    print(f"Toggling LED{led} from {current_status} to {new_status}")
     _send_request(f"https://{ESP8266_HOST}/led{led}/{new_status}")
     return new_status
 
