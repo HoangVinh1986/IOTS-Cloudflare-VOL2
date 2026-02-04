@@ -81,9 +81,15 @@ function toggleLed(led) {
                     alert(data.message);
                     updateStatus();
                 })
-                .catch(err => console.error('Error:', err));
+                .catch(err => {
+                    console.error('Error:', err);
+                    alert('Lỗi khi điều khiển đèn: ' + err.message);
+                });
         })
-        .catch(err => console.error('Error:', err));
+        .catch(err => {
+            console.error('Error:', err);
+            alert('Không thể lấy trạng thái đèn. Kiểm tra kết nối với ESP8266.');
+        });
 }
 
 function controlAll(action) {
